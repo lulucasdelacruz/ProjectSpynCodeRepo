@@ -11,46 +11,49 @@ import ConnectBrick.*;
 
 % brick = Brick('ioType','wifi','wfAddr','127.0.0.1','wfPort',5555,'wfSN','0016533dbaf5');
 
-% brick = ConnectBrick("WINNERS");
-
+brick = ConnectBrick("WINNERS");
 brick.SetColorMode(1, 4);
-brick.MoveMotor('A', 50);
-brick.MoveMotor('B', 50); 
+run(brick);
 
-while (true)
-    disp(brick.ColorCode(1));
+
+function run(brick)
+    lastHitRed = datetime('now') - seconds(10.0);
+    goStraight(brick);
+    while (true)
+        lastHitRed = hitsRed(brick, lastHitRed);
+    end
+end
+
+function newTimeHit = hitsRed(brick, lastHitRed)
+    newTimeHit = lastHitRed;
     if (brick.ColorCode(1) == 5)
-        break;
+        if (seconds(datetime('now') - lastHitRed) > 10)
+            newTimeHit = datetime('now');
+            stopAllMotors(brick);
+            pause(5);
+            goStraight(brick);
+        end
     end
 end
 
-stopAllMotors(brick);
-
-pause(3);
-
-brick.MoveMotor('A', 50);
-brick.MoveMotor('B', 50); 
-
-while (true)
-    disp(brick.UltrasonicDist(2));
-    if (brick.UltrasonicDist(2) <= 30)
-        break;
+function hittingWall(brick)
+    if (brick.TouchPressed(3))
+        StopAllMotors(brick);
+        turnRight()
     end
 end
 
-stopAllMotors(brick);
+function goStraight(brick)
+    brick.MoveMotor('A', 50);
+    brick.MoveMotor('B', 50);
+end
 
-pause(3);
+function stopAllMotors(brick)
+    brick.StopMotor('A');
+    brick.StopMotor('B');
+end
 
-% Makes Robot Turn Right
-brick.MoveMotor('A', 50);
-brick.MoveMotor('B', -50);
-
-pause(2);
-
-stopAllMotors(brick);
-
-function stopAllMotors(Brick)
-    Brick.StopMotor('A');
-    Brick.StopMotor('B');
+function turnRight(brick)
+    brick.MoveMotor('A', 50);
+    brick.MoveMotor('B', -50);
 end
