@@ -13,6 +13,7 @@ import ConnectBrick.*;
 
 brick = ConnectBrick("WINNERS");
 brick.SetColorMode(1, 4);
+hadPerson = true;
 run(brick);
 
 
@@ -21,6 +22,21 @@ function run(brick)
     goStraight(brick);
     while (true)
         lastHitRed = hitsRed(brick, lastHitRed);
+        hittingWall(brick);
+        pickUpHandicap(brick);
+    end
+end
+
+function pickUpHandicap(brick)
+    if (brick.TouchPressed(4) ~= true)
+        if (brick.ColorCode(1) == 2)
+            % find person
+            while (brick.TouchPressed(4) ~= true)
+            
+            end
+        end
+    else
+        disp("have handicap")
     end
 end
 
@@ -38,22 +54,25 @@ end
 
 function hittingWall(brick)
     if (brick.TouchPressed(3))
-        StopAllMotors(brick);
-        turnRight()
+        turnRight(brick);
+        goStraight(brick);
     end
 end
 
 function goStraight(brick)
     brick.MoveMotor('A', 50);
-    brick.MoveMotor('B', 50);
+    brick.MoveMotor('D', 50);
 end
 
 function stopAllMotors(brick)
     brick.StopMotor('A');
-    brick.StopMotor('B');
+    brick.StopMotor('D');
 end
 
 function turnRight(brick)
+    StopAllMotors(brick);
+    pause(0.5);
     brick.MoveMotor('A', 50);
-    brick.MoveMotor('B', -50);
+    brick.MoveMotor('D', -50);
+    pause(0.6);
 end
